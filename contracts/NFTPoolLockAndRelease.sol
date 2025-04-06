@@ -55,12 +55,11 @@ contract NFTPoolLockAndRelease is CCIPReceiver, OwnerIsCreator {
         uint256 tokenId;
         address newOwner;
     }
-    // 标记指定的token是否被锁定
-    mapping(uint256 => bool) public TokenLocked;
+ 
 
-    /// @notice Constructor initializes the contract with the router address.
-    /// @param _router The address of the router contract.
-    /// @param _link The address of the link contract.
+    /// @notice Constructor initializes the contract with the router address.   
+    /// @param _router The address of the router contract. 路由合约地址   这个是chainlink提供商部署的合约地址
+    /// @param _link The address of the link contract. 链接合约地址  这个是chainlink提供商部署的合约地址
     constructor(address _router, address _link, address nftAddr) CCIPReceiver(_router) {
         s_linkToken = IERC20(_link);
         // 创建源NFT合约对象
@@ -97,7 +96,6 @@ contract NFTPoolLockAndRelease is CCIPReceiver, OwnerIsCreator {
             // 信息需要转换为bytes格式，更方便传输。我发送要跨链的tokenId以及包装token的所有人地址
             bytes memory payload = abi.encode(tokenId, newOwner);
             bytes32 messageId = sendMessagePayLINK(chainSelector, receiver, payload);
-            TokenLocked[tokenId] = true;
             return messageId;
                 
     }
@@ -172,17 +170,13 @@ contract NFTPoolLockAndRelease is CCIPReceiver, OwnerIsCreator {
         address newOwner = rd.newOwner;
         
 
-       // check if the nft is locked
-       require(TokenLocked[tokenId], "The Token is not locked");
-
        // transfer token from this address to new owner
        // unlock the nft
        // 将当前token池中的token转移回源链，就相当于解锁操作
        nft.transferFrom(address(this), newOwner, tokenId);
        // 发送解锁事件
        emit TokenUnLocked(tokenId, newOwner);
-       // unmark the nft as locked
-       TokenLocked[tokenId] = false;
+
     }
 
     // 构建CCIP消息
