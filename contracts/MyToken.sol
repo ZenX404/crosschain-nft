@@ -18,18 +18,20 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
     // 使用OpenSea查看NFT的时候，会自动去ipfs读取json数据，然后显示出来，所以下面的地址可以不写通过filebase访问ipfs前缀（因为直接使用ipfs存储数据上手比较难，所以有一些提供商会提供方便大家使用ipfs存储数据的服务，比如filebase）
     string constant META_DATA = "ipfs://QmXw7TEAJWKjKifvLE25Z9yjvowWk2NWY3WgnZPUto9XoA";
 
-    constructor(address initialOwner)
-        ERC721("MyToken", "MTK")
-        Ownable(initialOwner)
+    constructor(string memory tokenName, string memory tokenSymbol)
+        // 自定义token名称和简称
+        ERC721(tokenName, tokenSymbol)
+        // 合约的拥有者就是部署该合约的地址
+        Ownable(msg.sender)
     {}
 
     // 铸造NFT
     // 入参：to 要将这个NFT铸造给哪个地址
     function safeMint(address to)
         public
-        onlyOwner
         returns (uint256)
     {
+        // 生成一个唯一的tokenId，唯一标识一个NFT
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, META_DATA); // 铸造NFT的时候要传入这个NFT的Metadata
