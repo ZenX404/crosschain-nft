@@ -19,7 +19,7 @@ module.exports = async({getNamedAccounts, deployments}) => {
     const sourceChainRouter = ccipConfig.sourceRouter_;
     const linkTokenAddr = ccipConfig.linkToken_;
     // 通过deployments传入部署的合约名称来获得合约的deployment对象   
-    // 这个是在1_deploy_my_token.js脚本中通过hardhat插件deployments部署的MyToken合约，所以才可以通过deployments.get获得
+    // 这个是在1_deploy_nft.js脚本中通过hardhat插件deployments部署的MyToken合约，所以才可以通过deployments.get获得
     const nftDeployment = await deployments.get("MyToken");
     // 通过nftDeployment获得MyToken合约的部署地址
     const nftAddr = nftDeployment.address;
