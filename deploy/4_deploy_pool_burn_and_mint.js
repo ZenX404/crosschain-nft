@@ -8,7 +8,7 @@ module.exports = async({getNamedAccounts, deployments}) => {
     // 构建mock合约入参
     // address _router, address _link, address nftAddr
     // 通过合约名称获取该合约的deployment对象  因为在0_deploy_ccip_simulator.js中通过hardhat插件deployments部署了CCIPLocalSimulator合约
-    // CCIPLocalSimulator合约就是chainlink的本地模拟器
+    // CCIPLocalSimulator合约就是chainlink提供的ccip服务的本地模拟器
     const ccipSimulatorDeployment = await deployments.get("CCIPLocalSimulator");
     // 通过ccipSimulatorDeployment获得CCIPLocalSimulator的部署地址，进而通过ethers.getContractAt获得CCIPLocalSimulator的合约实例
     // 要传入合约名称

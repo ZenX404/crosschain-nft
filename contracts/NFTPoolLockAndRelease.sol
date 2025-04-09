@@ -80,7 +80,7 @@ contract NFTPoolLockAndRelease is CCIPReceiver, OwnerIsCreator {
     // 锁定NFT，并发送给目标链
     function lockAndSendNFT(
         uint256 tokenId, // 要锁定的NFT的tokenId
-        address newOwner, // 包装NFT的新owner
+        address newOwner, // 包装NFT的对应在源NFT的所属人地址
         uint64 chainSelector, // 目标链的chainSelector，也就是目标链的chainId
         address receiver // 目标链的receiver，也就是目标链的合约地址
         ) public returns (bytes32){
@@ -89,6 +89,9 @@ contract NFTPoolLockAndRelease is CCIPReceiver, OwnerIsCreator {
             // 需要先将源链上的NFT转移到当前这个NFTPoolLockAndRelease合约的地址上，来将NFT锁定
             // 要将msg.sender持有人所持有的tokenId这个NFT转移到address(this)当前NFTPoolLockAndRelease合约的地址上
             // 经过这一步，我们就可以认为该NFT已经被锁定在池子里了
+            // 这里调用nft.transferFrom函数，调用地址是当前这个NFTPoolLockAndRelease合约的地址，也就是address(this)
+            // 所以如果有一个地址调用了当前这个lockAndSendNFT函数，然后这个函数中又调用了nft.transferFrom函数，最终实际调用nft.transferFrom函数的是NFTPoolLockAndRelease合约的地址，而不是最初调用lockAndSendNFT函数的地址，这一点一定要想清楚
+            // 所以如果想要转移nft，需要先调用nft.approve函数，将nft的转移权限授予当前这个NFTPoolLockAndRelease合约的地址
             nft.transferFrom(msg.sender, address(this), tokenId);
 
             // construct data to be sent
