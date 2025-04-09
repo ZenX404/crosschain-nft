@@ -76,10 +76,19 @@ describe("source chain -> dest chain tests", async function() {
             // 判断nft是否完成了锁定并向ccip发送了消息
             // 获取源链中该nft的owner地址
             const newOwner = await nft.ownerOf(0);
-            // 断言nft的owner地址是否为nftPoolLockAndRelease合约的地址,如果相等，说明nft已经被锁定在nftPoolLockAndRelease合约中了
+            // 断言nft的owner地址是否为nftPoolLockAndRelease合约的地址,如果相等，说明nft已经被锁定在nftPoolLockAndRelease合约中了。nft已经完成锁定也就说明已经向ccip发送消息了
             expect(newOwner).to.equal(nftPoolLockAndRelease);
         
         }
-    )
+    );
 
+    it("test if user can get a wrapped nft in dest chain", 
+        async function() {
+            // 如果前面在锁定源NFT时向ccip发送消息成功的话，那么在目的链中应该会自动铸造一个包装nft
+            // 所以我们这里获取一下目的链中tokenid为0包装nft的owner地址（合约第一个铸造的NFT的tokenid就是0）
+            const owner = await wnft.ownerOf(0);
+            // 判断wnft的owner是否和源nft的owner一致，是则说明wnft被成功铸造
+            expect(owner).to.equal(firstAccount);
+        }
+    )
 });

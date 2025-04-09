@@ -80,7 +80,7 @@ contract NFTPoolLockAndRelease is CCIPReceiver, OwnerIsCreator {
     // 锁定NFT，并发送给目标链
     function lockAndSendNFT(
         uint256 tokenId, // 要锁定的NFT的tokenId
-        address newOwner, // 包装NFT的对应在源NFT的所属人地址
+        address newOwner, // 包装NFT的对应在源NFT的所属人地址,相当于包装NFT的owner要和源链的owner一致
         uint64 chainSelector, // 目标链的chainSelector，也就是目标链的chainId
         address receiver // 目标链的receiver，也就是目标链的合约地址
         ) public returns (bytes32){
