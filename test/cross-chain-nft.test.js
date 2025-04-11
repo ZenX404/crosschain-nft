@@ -92,3 +92,34 @@ describe("source chain -> dest chain tests", async function() {
         }
     )
 });
+
+describe("dest chain -> source chain tests", async function() {
+    it("test if user can burn the wrapped nft and send ccip message on dest chain",
+        async function() {
+            // 整个测试过程和从源链铸造并且发送消息到ccip的过程是一样的
+            await wnft.approve(nftPoolBurnAndMint.target, 0);
+            
+          
+            await ccipSimulator.requestLinkFromFaucet(nftPoolBurnAndMint, ethers.parseEther("100"));
+            
+            await nftPoolBurnAndMint.burnAndSendNFT(
+                0,
+                firstAccount,
+                chainSelector,
+                nftPoolLockAndRelease.target
+            );
+            
+            // 获取目的链中wnft的总供应量，因为我们nft给烧毁了，所以如果正常的话总量应该为0
+            const totalSupply = await wnft.totalSupply();
+            // 断言totalSupply是否为0
+            expect(totalSupply).to.equal(0);
+        }
+    );
+
+    it("test if user have the nft unlocked on source chain",
+        async function() {
+            const owner = await nft.ownerOf(0);
+            expect(owner).to.equal(firstAccount);
+        }
+    )
+});
